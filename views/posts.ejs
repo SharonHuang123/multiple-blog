@@ -1,0 +1,7 @@
+<%- include('header') %>
+<div class="home-wapper">
+<% posts.forEach(function (post) { %>
+  <%- include('components/post-content', { post: post }) %>
+<% }) %>
+</div>
+<%- include('footer') %>

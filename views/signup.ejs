@@ -1,0 +1,107 @@
+<%- include('header') %>
+
+<div class="ui grid">
+  <div class="four wide column"></div>
+  <div class="eight wide column">
+    <form class="ui form segment" method="post" enctype="multipart/form-data">
+      <div class="field required">
+        <label>用户名</label>
+        <input placeholder="用户名" type="text" name="name" validate="required,len[1-10]">
+      </div>
+      <div class="field required">
+        <label>密码</label>
+        <input placeholder="密码" type="password" name="password" validate="required,len[6]">
+      </div>
+      <div class="field required">
+        <label>重复密码</label>
+        <input placeholder="重复密码" type="password" name="repassword" validate="required,len[6],equal[name='password']">
+      </div>
+      <div class="field required">
+        <label>性别</label>
+        <select class="ui compact selection dropdown" name="gender" validate="required">
+          <option value="m">男</option>
+          <option value="f">女</option>
+          <option value="x">保密</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>头像</label>
+        <input type="file" name="avatar" validate="required" />
+      </div>
+      <div class="field required">
+        <label>个人简介</label>
+        <textarea name="bio" rows="5" v-model="user.bio" validate="required"></textarea>
+      </div>
+      <input id="submit" type="submit" class="ui button fluid" value="注册">
+    </div>
+  </form>
+</div>
+<script>
+  $(function(){
+    //$('#submit').on("click", function(e){
+    $('form').on('submit', function(e){
+        var messages = [];
+        $('form input,form textarea').each(function(i, el){
+          var rules = $(el).attr('validate');
+          var value = $(el).val();
+          var label = $(el).prev().text();
+
+          if(rules){
+            var ruleArr = rules.split(',').forEach(function(rule,i){
+              // 验证是否必填
+              if(rule == 'required' && !value){
+                messages.push(`${label}是必填项`);
+              }
+              // 验证长度
+              var regLen = /len\[(\d)(-(\d))?\]/.exec(rule);
+              if(regLen) {
+                if(regLen[1] && !regLen[3] && value.length<regLen[1]){
+                  messages.push(`${label}的长度不小于${regLen[1]}位`);
+                }else if(regLen[1] && regLen[3] && (value.length>regLen[3] 
+                  || value.length<regLen[1])){
+                  messages.push(`${label}的长度限于${regLen[1]}-${regLen[3]}位`)
+                }
+              }
+              
+              // 验证相等值
+              var regEqual = /equal\[(\w+)\]/.exec(rule);
+              if(regEqual){
+                var equalEl = $("form "+regEqual[1]);
+                if(value != equalEl.val()){
+                  messages.push(`${label}需要与${equalEl.prev().text()}保持一致`)
+                }
+              }
+            })
+          }
+        });
+
+        if(messages.length > 0){
+          showError(messages);
+          return false;
+        }
+        //else{
+          // $.ajax({
+          //   url:"/signup",
+          //   type:"POST",
+          //   cache: false,
+          //   processData:false,
+          //   contentType:false,
+          //   data: new FormData($('form')[0])       
+          // }).done(function(data){
+          //   console.log(data);
+          //   if(data.success && data.href){
+          //     window.location.href = data.href;
+          //   }else{
+          //     showError(data.errorMsg);
+          //   }
+          // }).fail(function(xhr,status,error){
+          //   showError('内部服务错误');
+          // })
+        }
+
+        return true;
+    });
+  });
+</script>
+
+<%- include('footer')%>

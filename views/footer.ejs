@@ -1,0 +1,30 @@
+<script type="text/javascript">
+  // 点击按钮弹出下拉框
+  $('.ui.dropdown').dropdown();
+  // 鼠标悬浮在头像上，弹出气泡提示框
+  $('.post-content .avatar').popup({
+    inline: true,
+    position: 'bottom right',
+    lastResort: 'bottom right',
+  });
+
+  // 前端验证错误提示
+  function showError(messages){
+      $('#notification').html("");
+      if(typeof messages !== "string"){
+        messages = messages.join('<br/>');
+      }
+
+      $('#notification').html(`
+        <div class="ui error message">
+          <p>
+            ${messages}
+          </p>
+        </div>`
+      )
+    }
+
+</script>
+</body>
+
+</html>
